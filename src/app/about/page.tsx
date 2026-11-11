@@ -115,9 +115,7 @@ const hobbies: Hobby[] = [
 ];
 
 export default function AboutPage() {
-  const marqueeSkills = skills.filter(s =>
-    ["Frontend", "Backend", "Database", "Tools", "IoT/Hardware", "Deployment"].includes(s.category)
-  );
+  const marqueeSkills = skills;
 
   const stats = [
     { icon: <Briefcase className="w-5 h-5" />, value: "4th", label: "Year BSIT Student" },
@@ -286,7 +284,7 @@ export default function AboutPage() {
                 <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-sky-500/10 flex items-center justify-center text-sky-400 shrink-0">
                   <Terminal className="w-5 h-5 sm:w-6 sm:h-6" />
                 </div>
-                <h3 className="text-lg sm:text-2xl font-bold text-foreground uppercase tracking-wider">Technologies I Use</h3>
+                <h3 className="text-lg sm:text-2xl font-bold text-foreground uppercase tracking-wider">Skills &amp; Tools I Use</h3>
               </div>
               <Button variant="outline" className="border-border text-foreground hover:bg-accent rounded-xl text-sm" asChild>
                 <Link href="/skills">

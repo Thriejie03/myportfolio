@@ -9,9 +9,7 @@ import Link from "next/link";
 import type { HomepageContent } from "@/data/homepage";
 
 export function About({ content }: { content: HomepageContent["about"] }) {
-  const marqueeSkills = skills.filter(s => 
-    ["Frontend", "Backend", "Database", "Tools", "IoT/Hardware", "Deployment"].includes(s.category)
-  );
+  const marqueeSkills = skills;
 
   const statIcons = [
     <Briefcase key="projects" className="w-5 h-5" />,
@@ -83,7 +81,7 @@ export function About({ content }: { content: HomepageContent["about"] }) {
               <div className="w-12 h-12 rounded-xl bg-sky-500/10 flex items-center justify-center text-sky-400">
                 <Terminal className="w-6 h-6" />
               </div>
-              <h3 className="text-2xl font-bold text-foreground uppercase tracking-wider">Technologies I Use</h3>
+              <h3 className="text-2xl font-bold text-foreground uppercase tracking-wider">Skills &amp; Tools I Use</h3>
             </div>
             <Button variant="outline" className="border-border text-foreground hover:bg-accent rounded-xl" asChild>
               <Link href="/skills">

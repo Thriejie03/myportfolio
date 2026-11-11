@@ -3,15 +3,21 @@
 import { skills } from "@/data/skills";
 import { motion } from "framer-motion";
 
-const categories = ["Frontend", "Backend", "Database", "Tools", "IoT/Hardware", "Deployment"];
+const categories = [
+  "Office & Productivity",
+  "Communication & Collaboration",
+  "Design & Media",
+  "Documentation & Organization",
+  "Digital & AI Literacy",
+] as const;
 
 export function SkillsGrid() {
   return (
     <section className="py-24 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">Technical <span className="text-sky-400">Stack</span></h2>
-          <p className="text-muted-foreground">My toolbox for building high-quality software solutions.</p>
+          <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">Skills &amp; <span className="text-sky-400">Tools</span></h2>
+          <p className="text-muted-foreground">The practical tools and strengths I use to create, organize, and communicate quality work.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
