@@ -1,10 +1,10 @@
 "use client";
 
 import * as React from "react";
-import { defaultHomepageContent, type HomepageContent } from "@/data/homepage";
+import type { HomepageContent } from "@/data/homepage";
 
-export function useHomepageContent() {
-  const [content, setContent] = React.useState<HomepageContent>(defaultHomepageContent);
+export function useHomepageContent(): HomepageContent | null {
+  const [content, setContent] = React.useState<HomepageContent | null>(null);
 
   React.useEffect(() => {
     const controller = new AbortController();

@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useTheme } from "next-themes";
 import { useVisitCount } from "@/components/analytics/visit-counter";
 import { useHomepageContent } from "@/lib/use-homepage-content";
+import { defaultHomepageContent } from "@/data/homepage";
 
 const navItems = [
   { name: "Home", href: "/" },
@@ -25,7 +26,8 @@ export function Navbar() {
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
   const { count, unavailable } = useVisitCount();
-  const { cv } = useHomepageContent();
+  const homepage = useHomepageContent();
+  const cv = homepage?.cv ?? defaultHomepageContent.cv;
   const [mounted, setMounted] = React.useState(false);
   const formattedCount = count === null ? "—" : new Intl.NumberFormat().format(count);
 

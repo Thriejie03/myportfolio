@@ -27,12 +27,16 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-background selection:bg-sky-500/30">
       <Navbar />
-      
-      <Hero content={homepage.hero} />
-      
-      <About content={homepage.about} />
 
-      {homepage.achievement.enabled && <section className="py-20 sm:py-24 bg-accent/20">
+      {!homepage ? (
+        <section className="min-h-screen bg-background pt-20" aria-label="Loading portfolio content" />
+      ) : (
+        <>
+          <Hero content={homepage.hero} />
+
+          <About content={homepage.about} />
+
+          {homepage.achievement.enabled && <section className="py-20 sm:py-24 bg-accent/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-xl">
@@ -80,8 +84,10 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </section>}
-      
+          </section>}
+        </>
+      )}
+
       <section className="py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-6">
