@@ -1,13 +1,14 @@
 import { createClient } from "@supabase/supabase-js";
 import { certificates, type Certificate } from "@/data/certificates";
 import { projects } from "@/data/projects";
+import { hobbies, type Hobby } from "@/data/hobbies";
 import { defaultHomepageContent, mergeHomepageContent, type HomepageContent } from "@/data/homepage";
 import { getSupabaseConfig } from "@/lib/supabase/config";
 import type { Project } from "@/types/project";
 
 interface ContentRow {
   content: Record<string, unknown>;
-  is_featured: boolean;
+  is_featured?: boolean;
 }
 
 function createPublicClient() {
@@ -19,7 +20,7 @@ function createPublicClient() {
 }
 
 async function loadPublishedContent<T extends object>(
-  table: "portfolio_projects" | "portfolio_certificates",
+  table: "portfolio_projects" | "portfolio_certificates" | "portfolio_hobbies",
   fallback: T[],
 ): Promise<T[]> {
   const supabase = createPublicClient();
@@ -57,6 +58,10 @@ export async function getPublishedCertificates(): Promise<Certificate[]> {
     "portfolio_certificates",
     certificates,
   );
+}
+
+export async function getPublishedHobbies(): Promise<Hobby[]> {
+  return loadPublishedContent<Hobby>("portfolio_hobbies", hobbies);
 }
 
 export async function getPublishedHomepageContent(): Promise<HomepageContent> {

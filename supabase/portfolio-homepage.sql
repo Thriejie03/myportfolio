@@ -8,7 +8,7 @@ alter table public.portfolio_homepage enable row level security;
 
 revoke all on table public.portfolio_homepage from anon, authenticated;
 grant select on table public.portfolio_homepage to anon, authenticated;
-grant insert, update on table public.portfolio_homepage to authenticated;
+grant insert, update, delete on table public.portfolio_homepage to authenticated;
 
 drop policy if exists "Public can read homepage content" on public.portfolio_homepage;
 create policy "Public can read homepage content"

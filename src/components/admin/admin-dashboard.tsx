@@ -5,9 +5,10 @@ import { MessageInbox } from "@/components/admin/message-inbox";
 import { HomepageContentManager } from "@/components/admin/homepage-content-manager";
 import { PortfolioContentManager } from "@/components/admin/portfolio-content-manager";
 import { ChatbotFaqManager } from "@/components/admin/chatbot-faq-manager";
+import { HobbyManager } from "@/components/admin/hobby-manager";
 import { Button } from "@/components/ui/button";
 
-type Section = "inbox" | "content" | "homepage" | "chatbot";
+type Section = "inbox" | "content" | "homepage" | "chatbot" | "hobbies";
 
 export function AdminDashboard() {
   const [section, setSection] = React.useState<Section>("inbox");
@@ -27,6 +28,9 @@ export function AdminDashboard() {
         <Button type="button" variant={section === "chatbot" ? "default" : "outline"} onClick={() => setSection("chatbot")}>
           Chatbot FAQ
         </Button>
+        <Button type="button" variant={section === "hobbies" ? "default" : "outline"} onClick={() => setSection("hobbies")}>
+          Personal hobbies
+        </Button>
       </nav>
       {section === "inbox"
         ? <MessageInbox />
@@ -34,7 +38,9 @@ export function AdminDashboard() {
           ? <PortfolioContentManager />
           : section === "homepage"
             ? <HomepageContentManager />
-            : <ChatbotFaqManager />}
+            : section === "chatbot"
+              ? <ChatbotFaqManager />
+              : <HobbyManager />}
     </>
   );
 }

@@ -5,121 +5,20 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { AIChatbot } from "@/components/chatbot/chatbot";
 import { motion, AnimatePresence } from "framer-motion";
-import { Code, Briefcase, Clock, Heart, Terminal, ExternalLink, Sparkles, ChevronRight, X, ChevronLeft, ZoomIn } from "lucide-react";
+import { Briefcase, Clock, Heart, Terminal, ExternalLink, Sparkles, ChevronRight, X, ChevronLeft, ZoomIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { skills } from "@/data/skills";
+import { hobbies, type Hobby, type HobbyImage } from "@/data/hobbies";
+import { usePublishedContent } from "@/lib/use-published-content";
 import Link from "next/link";
-
-type HobbyImage = {
-  src: string;
-  alt: string;
-};
-
-const PickleBallIcon = () => (
-  <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full">
-    <defs>
-      <radialGradient id="pb-ball" cx="38%" cy="32%" r="72%">
-        <stop offset="0%" stopColor="#d7ff45" />
-        <stop offset="55%" stopColor="#a8ee0c" />
-        <stop offset="100%" stopColor="#67b800" />
-      </radialGradient>
-      <radialGradient id="pb-highlight" cx="35%" cy="28%" r="30%">
-        <stop offset="0%" stopColor="#ffffff" stopOpacity="0.65" />
-        <stop offset="100%" stopColor="#ffffff" stopOpacity="0" />
-      </radialGradient>
-    </defs>
-    <circle cx="100" cy="100" r="94" fill="url(#pb-ball)" stroke="#4e9400" strokeWidth="2.5" />
-    <circle cx="100" cy="100" r="94" fill="url(#pb-highlight)" />
-    <circle cx="115" cy="55" r="10.5" fill="#7fc600" stroke="#59a300" strokeWidth="1.5" opacity="0.85" />
-    <circle cx="115" cy="55" r="10.5" fill="#ffffff" opacity="0.45" />
-    <circle cx="60" cy="78" r="12" fill="#7fc600" stroke="#59a300" strokeWidth="1.5" opacity="0.9" />
-    <circle cx="60" cy="78" r="12" fill="#ffffff" opacity="0.35" />
-    <circle cx="72" cy="112" r="16" fill="#8dd600" stroke="#5aa800" strokeWidth="1.5" />
-    <circle cx="72" cy="112" r="16" fill="#ffffff" opacity="0.25" />
-    <circle cx="128" cy="114" r="16.5" fill="#8dd600" stroke="#5aa800" strokeWidth="1.5" />
-    <circle cx="128" cy="114" r="16.5" fill="#ffffff" opacity="0.25" />
-    <circle cx="165" cy="98" r="11" fill="#7fc600" stroke="#59a300" strokeWidth="1.5" opacity="0.9" />
-    <circle cx="165" cy="98" r="11" fill="#ffffff" opacity="0.35" />
-    <ellipse cx="62" cy="150" rx="14" ry="8" fill="#85cb00" stroke="#559e00" strokeWidth="1.5" transform="rotate(-18 62 150)" opacity="0.9" />
-    <ellipse cx="132" cy="164" rx="16" ry="8" fill="#85cb00" stroke="#559e00" strokeWidth="1.5" transform="rotate(12 132 164)" opacity="0.9" />
-    <ellipse cx="88" cy="182" rx="18" ry="6" fill="#80c300" stroke="#529900" strokeWidth="1.5" opacity="0.9" />
-    <ellipse cx="148" cy="42" rx="16" ry="7" fill="#85cb00" stroke="#559e00" strokeWidth="1.5" transform="rotate(20 148 42)" opacity="0.85" />
-  </svg>
-);
-
-type Hobby = {
-  title: string;
-  icon: React.ReactNode;
-  iconLabel: string;
-  description: string;
-  images: HobbyImage[];
-  accent: string;
-};
-
-const hobbies: Hobby[] = [
-  {
-    title: "Pickle Ball",
-    icon: <PickleBallIcon />,
-    iconLabel: "🏓",
-    description: "Staying active and competitive on the court with fast-paced rallies",
-    accent: "from-yellow-500/20 to-emerald-500/20",
-    images: [
-      { src: "/pickle1.jpg", alt: "Pickle Ball game action" },
-      { src: "/pickle2.jpg", alt: "Pickle Ball court" },
-      { src: "/pickle3.jpg", alt: "Pickle Ball match" },
-    ],
-  },
-  {
-    title: "Billiards",
-    icon: "🎱",
-    iconLabel: "🎱",
-    description: "Focusing the mind with strategic shots and precise positioning",
-    accent: "from-sky-500/20 to-indigo-500/20",
-    images: [
-      { src: "/billiard1.jpg", alt: "Billiards table shot" },
-    ],
-  },
-  {
-    title: "Coffee Sessions",
-    icon: "☕",
-    iconLabel: "☕",
-    description: "Fueling creativity one cup at a time in cozy cafés",
-    accent: "from-amber-500/20 to-orange-500/20",
-    images: [
-      { src: "/coffee1.jpg", alt: "Coffee cup" },
-    ],
-  },
-  {
-    title: "Hiking",
-    icon: "🥾",
-    iconLabel: "🥾",
-    description: "Exploring nature trails and reaching breathtaking mountain summits",
-    accent: "from-emerald-500/20 to-teal-500/20",
-    images: [
-      { src: "/hiking1.jpg", alt: "Mountain trail" },
-      { src: "/hiking2.jpg", alt: "Hiking summit view" },
-    ],
-  },
-  {
-    title: "Travel",
-    icon: "✈️",
-    iconLabel: "✈️",
-    description: "Discovering new places, cultures, and unforgettable experiences",
-    accent: "from-sky-500/20 to-cyan-500/20",
-    images: [
-      { src: "/travel1.jpg", alt: "Travel destination" },
-      { src: "/travel2.jpg", alt: "Scenic travel spot" },
-      { src: "/travel3.jpg", alt: "Travel adventure" },
-    ],
-  },
-];
 
 export default function AboutPage() {
   const marqueeSkills = skills;
+  const publishedHobbies = usePublishedContent<Hobby>("/api/content/hobbies", hobbies);
 
   const stats = [
     { icon: <Briefcase className="w-5 h-5" />, value: "4th", label: "Year BSIT Student" },
-    { icon: <Code className="w-5 h-5" />, value: `${skills.length}+`, label: "Technologies" },
+    { icon: <Sparkles className="w-5 h-5" />, value: `${skills.length}+`, label: "Skills & Tools" },
     { icon: <Clock className="w-5 h-5" />, value: "5", label: "Achievements" },
     { icon: <Heart className="w-5 h-5" />, value: "100%", label: "Commitment" },
   ];
@@ -288,7 +187,7 @@ export default function AboutPage() {
               </div>
               <Button variant="outline" className="border-border text-foreground hover:bg-accent rounded-xl text-sm" asChild>
                 <Link href="/skills">
-                  See All Technologies <ExternalLink className="ml-2 w-4 h-4" />
+                  See All Skills &amp; Tools <ExternalLink className="ml-2 w-4 h-4" />
                 </Link>
               </Button>
             </div>
@@ -343,10 +242,10 @@ export default function AboutPage() {
                 <span>Get to Know Me Better</span>
               </div>
               <h2 className="text-2xl sm:text-3xl lg:text-5xl font-extrabold text-foreground tracking-tight mb-4">
-                Beyond <span className="text-sky-400 bg-gradient-to-r from-sky-400 to-cyan-300 bg-clip-text text-transparent">the Code</span>
+                Beyond <span className="text-sky-400 bg-gradient-to-r from-sky-400 to-cyan-300 bg-clip-text text-transparent">the Classroom</span>
               </h2>
               <p className="text-muted-foreground text-sm sm:text-base leading-relaxed max-w-2xl mx-auto px-2">
-                Certifications, core values, and the personal interests that shape who I am as a developer and individual.
+                Achievements, personal values, and the interests that make me who I am beyond my studies.
               </p>
             </div>
           </motion.div>
@@ -411,7 +310,7 @@ export default function AboutPage() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 sm:gap-7">
-              {hobbies.map((hobby, hobbyIdx) => (
+              {publishedHobbies.map((hobby, hobbyIdx) => (
                 <motion.div
                   key={hobby.title}
                   initial={{ opacity: 0, y: 24 }}
@@ -482,7 +381,7 @@ export default function AboutPage() {
                 <div className="text-5xl sm:text-6xl">🌟</div>
                 <h5 className="text-foreground font-bold text-xl sm:text-2xl tracking-tight">Life is about Balance</h5>
                 <p className="text-muted-foreground text-sm sm:text-base max-w-xl leading-relaxed">
-                  Code, create, and take time to enjoy every moment. The best ideas come when you step away from the keyboard.
+                  Learn, create, and take time to enjoy every moment. Balance helps me stay curious, focused, and motivated.
                 </p>
               </div>
             </motion.div>
