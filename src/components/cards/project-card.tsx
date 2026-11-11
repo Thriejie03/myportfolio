@@ -2,7 +2,7 @@
 
 import { Project } from "@/types/project";
 import { motion } from "framer-motion";
-import { ExternalLink, ArrowRight, ImageIcon, FileText } from "lucide-react";
+import { ExternalLink, ImageIcon, FileText, Video } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -14,6 +14,7 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ project, index, onClick }: ProjectCardProps) {
+  const isDirectVideo = project.videoUrl && /\.(mp4|webm|mov)(?:$|[?#])/i.test(project.videoUrl);
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -29,7 +30,16 @@ export function ProjectCard({ project, index, onClick }: ProjectCardProps) {
       {/* Project Image */}
       <div className="aspect-[16/10] relative overflow-hidden bg-muted">
         <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent z-10" />
-        {project.imageUrl ? (
+        {isDirectVideo ? (
+          <video
+            src={project.videoUrl}
+            poster={project.videoThumbnailUrl || project.imageUrl || undefined}
+            controls
+            preload="metadata"
+            className="w-full h-full object-cover"
+            aria-label={`${project.title} video`}
+          />
+        ) : project.imageUrl ? (
           <img 
             src={project.imageUrl} 
             alt={project.title}
@@ -63,6 +73,17 @@ export function ProjectCard({ project, index, onClick }: ProjectCardProps) {
                 <div className="w-10 h-10 rounded-full bg-accent/50 backdrop-blur-md text-foreground flex items-center justify-center hover:scale-110 transition-transform">
                   <ImageIcon className="w-5 h-5" />
                 </div>
+              )}
+              {!isDirectVideo && project.videoUrl && (
+                <Link
+                  href={project.videoUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-10 h-10 rounded-full bg-purple-500 text-white flex items-center justify-center hover:scale-110 transition-transform"
+                  title="Watch video"
+                >
+                  <Video className="w-5 h-5" />
+                </Link>
               )}
            </div>
         </div>

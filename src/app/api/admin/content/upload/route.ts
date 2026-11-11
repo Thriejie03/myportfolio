@@ -15,8 +15,14 @@ const documentTypes = new Map([
   ["application/msword", "doc"],
   ["application/vnd.openxmlformats-officedocument.wordprocessingml.document", "docx"],
 ]);
+const videoTypes = new Map([
+  ["video/mp4", "mp4"],
+  ["video/webm", "webm"],
+  ["video/quicktime", "mov"],
+]);
 
-const maximumSize = 5 * 1024 * 1024;
+const maximumImageOrDocumentSize = 5 * 1024 * 1024;
+const maximumVideoSize = 500 * 1024 * 1024;
 
 export async function POST(request: Request) {
   const supabase = await getPortfolioAdminClient();
@@ -29,12 +35,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Choose a file and a valid content type." }, { status: 400 });
   }
 
-  if (file.size === 0 || file.size > maximumSize) {
-    return NextResponse.json({ error: "Files must be smaller than 5 MB." }, { status: 400 });
-  }
-
   const imageExtension = imageTypes.get(file.type);
   const documentExtension = documentTypes.get(file.type);
+  const videoExtension = videoTypes.get(file.type);
+
+  if (file.size === 0 || file.size > (videoExtension ? maximumVideoSize : maximumImageOrDocumentSize)) {
+    return NextResponse.json({
+      error: videoExtension ? "Videos must be smaller than 500 MB." : "Files must be smaller than 5 MB.",
+    }, { status: 400 });
+  }
 
   if (imageExtension) {
     const bytes = new Uint8Array(await file.slice(0, 12).arrayBuffer());
@@ -91,5 +100,33 @@ export async function POST(request: Request) {
     return NextResponse.json({ documentUrl: data.publicUrl });
   }
 
-  return NextResponse.json({ error: "Upload a JPG, PNG, WebP image, or a PDF/Word document." }, { status: 400 });
+  if (videoExtension) {
+    if (collection !== "projects") {
+      return NextResponse.json({ error: "Video uploads are available for projects only." }, { status: 400 });
+    }
+
+    const bytes = new Uint8Array(await file.slice(0, 12).arrayBuffer());
+    const isValidVideo =
+      (file.type === "video/mp4" && bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) ||
+      (file.type === "video/webm" && String.fromCharCode(...bytes.slice(0, 4)) === "\x1a\x45\xdf\xa3") ||
+      (file.type === "video/quicktime" && bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70);
+    if (!isValidVideo) {
+      return NextResponse.json({ error: "The file content does not match a supported video format." }, { status: 400 });
+    }
+
+    const path = `${collection}/${randomUUID()}.${videoExtension}`;
+    const { error } = await supabase.storage
+      .from("portfolio-media")
+      .upload(path, file, { contentType: file.type, cacheControl: "31536000", upsert: false });
+
+    if (error) {
+      console.error("Unable to upload portfolio video:", error.message);
+      return NextResponse.json({ error: "Unable to upload video. If the file is too large for Supabase, use a hosted video link instead." }, { status: 503 });
+    }
+
+    const { data } = supabase.storage.from("portfolio-media").getPublicUrl(path);
+    return NextResponse.json({ videoUrl: data.publicUrl });
+  }
+
+  return NextResponse.json({ error: "Upload a JPG, PNG, WebP image, PDF/Word document, MP4, WebM, or MOV video." }, { status: 400 });
 }

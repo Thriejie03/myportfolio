@@ -51,7 +51,7 @@ function validateContent(collection: Collection, value: unknown): value is Recor
       typeof value.imageUrl === "string" && value.imageUrl.length <= 2048 &&
       ["Fullstack", "Frontend", "Backend", "IoT", "Game Dev", "Desktop"].includes(String(value.category)) &&
       (value.gallery === undefined || (Array.isArray(value.gallery) && value.gallery.length <= 40 && value.gallery.every((entry) => typeof entry === "string" && entry.length <= 2048))) &&
-      ["githubUrl", "liveUrl", "documentationUrl"].every((key) => value[key] === undefined || (typeof value[key] === "string" && value[key].length <= 2048))
+      ["githubUrl", "liveUrl", "documentationUrl", "videoUrl", "videoThumbnailUrl"].every((key) => value[key] === undefined || (typeof value[key] === "string" && value[key].length <= 2048))
     );
   }
 

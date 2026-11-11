@@ -2,9 +2,10 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { ImagePlus, Pencil, Plus, RefreshCw, Trash2 } from "lucide-react";
+import { ImagePlus, Pencil, Plus, RefreshCw, Trash2, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { showErrorAlert, showSuccessToast } from "@/lib/alerts";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import type { Certificate } from "@/data/certificates";
 import type { Project } from "@/types/project";
 
@@ -218,6 +219,8 @@ function ContentEditor({
   const [date, setDate] = React.useState(field(content, "date"));
   const [category, setCategory] = React.useState(field(content, "category", collection === "projects" ? "Fullstack" : "Programming"));
   const [imageUrl, setImageUrl] = React.useState(field(content, "imageUrl"));
+  const [videoUrl, setVideoUrl] = React.useState(field(content, "videoUrl"));
+  const [videoThumbnailUrl, setVideoThumbnailUrl] = React.useState(field(content, "videoThumbnailUrl"));
   const [link, setLink] = React.useState(field(content, "link"));
   const [technologies, setTechnologies] = React.useState(textList(content.technologies));
   const [features, setFeatures] = React.useState(textList(content.features));
@@ -253,6 +256,50 @@ function ContentEditor({
     }
   }
 
+  async function uploadVideo(file: File | undefined) {
+      if (!file) return;
+      if (!file.type.startsWith("video/")) {
+        await showErrorAlert("Video upload failed", "Choose an MP4, WebM, or MOV video.");
+        return;
+      }
+      const objectUrl = URL.createObjectURL(file);
+      try {
+        const duration = await new Promise<number>((resolve, reject) => {
+          const preview = document.createElement("video");
+          preview.preload = "metadata";
+          preview.onloadedmetadata = () => resolve(preview.duration);
+          preview.onerror = () => reject(new Error("The video duration could not be read."));
+          preview.src = objectUrl;
+        });
+        if (duration < 600) {
+          await showErrorAlert("Video upload failed", "Project videos must be at least 10 minutes long. You can use an image and hosted link for shorter work.");
+          return;
+        }
+      } catch (error) {
+        await showErrorAlert("Video upload failed", error instanceof Error ? error.message : "The video duration could not be read.");
+        return;
+      } finally {
+        URL.revokeObjectURL(objectUrl);
+      }
+      setIsUploading(true);
+      try {
+        const supabase = createSupabaseBrowserClient();
+        const path = `projects/${crypto.randomUUID()}.${file.name.split(".").pop()?.toLowerCase() || "mp4"}`;
+        const { error } = await supabase.storage
+          .from("portfolio-media")
+          .upload(path, file, { contentType: file.type, cacheControl: "31536000", upsert: false });
+        if (error) throw new Error(error.message);
+        const { data } = supabase.storage.from("portfolio-media").getPublicUrl(path);
+        setVideoUrl(data.publicUrl);
+        await showSuccessToast("Video uploaded");
+      } catch (error) {
+        console.error("Unable to upload portfolio video:", error);
+        await showErrorAlert("Video upload failed", error instanceof Error ? error.message : "Use a hosted video link if the file is too large.");
+      } finally {
+        setIsUploading(false);
+      }
+    }
+
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsSaving(true);
@@ -265,6 +312,8 @@ function ContentEditor({
           technologies: splitLines(technologies),
           features: splitLines(features),
           imageUrl: imageUrl.trim(),
+          ...(videoUrl.trim() ? { videoUrl: videoUrl.trim() } : {}),
+          ...(videoThumbnailUrl.trim() ? { videoThumbnailUrl: videoThumbnailUrl.trim() } : {}),
           category,
           gallery: splitLines(gallery),
           ...(githubUrl.trim() ? { githubUrl: githubUrl.trim() } : {}),
@@ -321,6 +370,18 @@ function ContentEditor({
 
         {collection === "projects" ? (
           <>
+            <div className="space-y-3 rounded-xl border border-border bg-card/60 p-4">
+              <div>
+                <h3 className="font-semibold text-foreground">Video portfolio (optional)</h3>
+                <p className="mt-1 text-xs text-muted-foreground">Upload an MP4, WebM, or MOV video up to 500 MB. For videos around 10 minutes or longer, use good-quality MP4. If Supabase cannot store it, paste a hosted video link instead.</p>
+              </div>
+              <Field label="Video URL"><input maxLength={2048} value={videoUrl} onChange={(event) => setVideoUrl(event.target.value)} className={inputClass} placeholder="https://…/video.mp4 or YouTube/Vimeo link" /></Field>
+              <Field label="Video thumbnail URL (optional)"><input maxLength={2048} value={videoThumbnailUrl} onChange={(event) => setVideoThumbnailUrl(event.target.value)} className={inputClass} placeholder="Use the project image if empty" /></Field>
+              <label className="inline-flex cursor-pointer items-center rounded-xl border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-accent">
+                <Video className="mr-2 h-4 w-4" /> {isUploading ? "Uploading…" : "Upload project video"}
+                <input type="file" accept="video/mp4,video/webm,video/quicktime" disabled={isUploading} className="sr-only" onChange={(event) => void uploadVideo(event.target.files?.[0])} />
+              </label>
+            </div>
             <Field label="Gallery image URLs (one per line)"><textarea rows={3} value={gallery} onChange={(event) => setGallery(event.target.value)} className={inputClass} /></Field>
             <div className="grid gap-4 sm:grid-cols-3">
               <Field label="GitHub URL"><input maxLength={2048} value={githubUrl} onChange={(event) => setGithubUrl(event.target.value)} className={inputClass} /></Field>
