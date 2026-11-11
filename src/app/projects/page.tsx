@@ -23,7 +23,7 @@ export default function ProjectsPage() {
           <div className="text-center mb-16">
             <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">All <span className="text-sky-400">Projects</span></h1>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              A comprehensive list of my work, including web applications, desktop software, and hardware projects.
+              A collection of Thrie Jie&apos;s academic, creative, and practical outputs. Projects will be added as her experience grows.
             </p>
           </div>
 

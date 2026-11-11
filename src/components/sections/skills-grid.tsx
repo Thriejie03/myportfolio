@@ -16,8 +16,8 @@ export function SkillsGrid() {
     <section className="py-24 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">Skills &amp; <span className="text-sky-400">Tools</span></h2>
-          <p className="text-muted-foreground">The practical tools and strengths I use to create, organize, and communicate quality work.</p>
+          <h1 className="text-3xl md:text-5xl font-bold text-foreground mb-4">Skills &amp; <span className="text-sky-400">Tools</span></h1>
+          <p className="text-muted-foreground">The practical tools and strengths Thrie Jie uses to create, organize, and communicate quality work.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">

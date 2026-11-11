@@ -46,7 +46,7 @@ export default function CertificatesPage() {
           <div className="text-center mb-12 sm:mb-16">
             <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-foreground mb-4 sm:mb-6">Certificates & <span className="text-sky-400">Achievements</span></h1>
             <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
-              Professional certifications and academic achievements that validate my technical skills.
+              Thrie Jie&apos;s academic achievements, trainings, seminars, and certificates earned through her studies and learning journey.
             </p>
           </div>
 
