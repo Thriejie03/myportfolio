@@ -1,10 +1,10 @@
 "use client";
 
+import * as React from "react";
 import { Project } from "@/types/project";
 import { motion } from "framer-motion";
 import { ExternalLink, ImageIcon, FileText, Video } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 interface ProjectCardProps {
@@ -14,31 +14,38 @@ interface ProjectCardProps {
 }
 
 export function ProjectCard({ project, index, onClick }: ProjectCardProps) {
-  const isDirectVideo = project.videoUrl && /\.(mp4|webm|mov)(?:$|[?#])/i.test(project.videoUrl);
+  const [videoFailed, setVideoFailed] = React.useState(false);
+  const isDirectVideo = Boolean(project.videoUrl && /\.(mp4|webm|mov)(?:$|[?#])/i.test(project.videoUrl));
+  const hasGallery = Boolean(project.gallery?.length);
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
       viewport={{ once: true }}
-      onClick={onClick}
+      onClick={hasGallery ? onClick : undefined}
       className={cn(
         "group relative bg-card rounded-2xl border border-border overflow-hidden hover:border-sky-500/50 transition-all duration-300 flex flex-col h-full shadow-lg",
-        project.gallery && "cursor-pointer"
+        hasGallery && "cursor-pointer"
       )}
     >
       {/* Project Image */}
       <div className="aspect-[16/10] relative overflow-hidden bg-muted">
         <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent z-10" />
-        {isDirectVideo ? (
+        {isDirectVideo && !videoFailed ? (
           <video
             src={project.videoUrl}
             poster={project.videoThumbnailUrl || project.imageUrl || undefined}
             controls
             preload="metadata"
+            playsInline
             className="w-full h-full object-cover"
             aria-label={`${project.title} video`}
-          />
+            onClick={(event) => event.stopPropagation()}
+            onError={() => setVideoFailed(true)}
+          >
+            Your browser cannot play this video. Use the external video link below.
+          </video>
         ) : project.imageUrl ? (
           <img 
             src={project.imageUrl} 
@@ -52,6 +59,7 @@ export function ProjectCard({ project, index, onClick }: ProjectCardProps) {
         )}
         
         {/* Overlay Links */}
+        {!isDirectVideo && (
         <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-sky-500/10 backdrop-blur-[2px]">
            <div className="flex space-x-3">
               {project.liveUrl && (
@@ -69,12 +77,12 @@ export function ProjectCard({ project, index, onClick }: ProjectCardProps) {
                   <FileText className="w-5 h-5" />
                 </Link>
               )}
-              {project.gallery && (
+              {hasGallery && (
                 <div className="w-10 h-10 rounded-full bg-accent/50 backdrop-blur-md text-foreground flex items-center justify-center hover:scale-110 transition-transform">
                   <ImageIcon className="w-5 h-5" />
                 </div>
               )}
-              {!isDirectVideo && project.videoUrl && (
+              {project.videoUrl && (
                 <Link
                   href={project.videoUrl}
                   target="_blank"
@@ -87,6 +95,7 @@ export function ProjectCard({ project, index, onClick }: ProjectCardProps) {
               )}
            </div>
         </div>
+        )}
       </div>
 
       <div className="p-6 flex flex-col flex-1">
@@ -97,6 +106,18 @@ export function ProjectCard({ project, index, onClick }: ProjectCardProps) {
         <p className="text-muted-foreground text-xs leading-relaxed mb-6 flex-1">
           {project.description}
         </p>
+
+        {project.videoUrl && (
+          <Link
+            href={project.videoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(event) => event.stopPropagation()}
+            className="mb-4 inline-flex w-fit items-center gap-2 text-xs font-medium text-sky-400 hover:text-sky-300"
+          >
+            <Video className="h-4 w-4" /> Open video in a new tab
+          </Link>
+        )}
 
         <div className="flex flex-wrap gap-2 mb-4">
           {project.technologies.map((tech) => (
