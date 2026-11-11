@@ -262,25 +262,6 @@ function ContentEditor({
         await showErrorAlert("Video upload failed", "Choose an MP4, WebM, or MOV video.");
         return;
       }
-      const objectUrl = URL.createObjectURL(file);
-      try {
-        const duration = await new Promise<number>((resolve, reject) => {
-          const preview = document.createElement("video");
-          preview.preload = "metadata";
-          preview.onloadedmetadata = () => resolve(preview.duration);
-          preview.onerror = () => reject(new Error("The video duration could not be read."));
-          preview.src = objectUrl;
-        });
-        if (duration < 600) {
-          await showErrorAlert("Video upload failed", "Project videos must be at least 10 minutes long. You can use an image and hosted link for shorter work.");
-          return;
-        }
-      } catch (error) {
-        await showErrorAlert("Video upload failed", error instanceof Error ? error.message : "The video duration could not be read.");
-        return;
-      } finally {
-        URL.revokeObjectURL(objectUrl);
-      }
       setIsUploading(true);
       try {
         const supabase = createSupabaseBrowserClient();
@@ -373,7 +354,7 @@ function ContentEditor({
             <div className="space-y-3 rounded-xl border border-border bg-card/60 p-4">
               <div>
                 <h3 className="font-semibold text-foreground">Video portfolio (optional)</h3>
-                <p className="mt-1 text-xs text-muted-foreground">Upload an MP4, WebM, or MOV video up to 500 MB. For videos around 10 minutes or longer, use good-quality MP4. If Supabase cannot store it, paste a hosted video link instead.</p>
+                <p className="mt-1 text-xs text-muted-foreground">Upload an MP4, WebM, or MOV video of any length, including short clips, up to 500 MB. If Supabase cannot store it, paste a hosted video link instead.</p>
               </div>
               <Field label="Video URL"><input maxLength={2048} value={videoUrl} onChange={(event) => setVideoUrl(event.target.value)} className={inputClass} placeholder="https://…/video.mp4 or YouTube/Vimeo link" /></Field>
               <Field label="Video thumbnail URL (optional)"><input maxLength={2048} value={videoThumbnailUrl} onChange={(event) => setVideoThumbnailUrl(event.target.value)} className={inputClass} placeholder="Use the project image if empty" /></Field>
