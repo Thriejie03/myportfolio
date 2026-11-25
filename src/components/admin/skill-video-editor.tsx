@@ -15,7 +15,7 @@ import {
   Video,
   X,
 } from "lucide-react";
-import { Upload as TusUpload } from "tus-js-client";
+import { DetailedError, Upload as TusUpload } from "tus-js-client";
 import { Button } from "@/components/ui/button";
 import { showErrorAlert, showSuccessToast } from "@/lib/alerts";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -240,7 +240,13 @@ export function SkillVideoEditor({
         return;
       }
       console.error("Unable to upload skill video:", error);
-      const message = error instanceof Error ? error.message : "Unable to upload video. Please try again.";
+      const isSizeLimitError =
+        error instanceof DetailedError && error.originalResponse?.getStatus() === 413;
+      const message = isSizeLimitError
+        ? "Supabase rejected this video because it exceeds the active Storage size limit. Check Storage → Settings → Global file size limit and the portfolio-media bucket limit. Free projects are capped at 50 MB. Reduce/compress the video or use a YouTube/Vimeo link if it exceeds your plan's limit."
+        : error instanceof Error
+          ? error.message
+          : "Unable to upload video. Please try again.";
       if (mountedRef.current) {
         setUpload({ status: "idle", fileName: "", bytesSent: 0, bytesTotal: 0 });
         setUploadError(message);
@@ -422,7 +428,8 @@ export function SkillVideoEditor({
                   </span>
                   <span className="relative mt-1 text-xs text-muted-foreground">
                     or <span className="font-semibold text-sky-500 underline decoration-sky-500/40 underline-offset-4">browse files</span>
-                    <span className="block pt-1.5">Up to 500 MB · Your progress is saved as it uploads</span>
+                    <span className="block pt-1.5">Supabase Free limit: 50 MB · higher limits depend on project and bucket settings</span>
+                    <span className="block pt-1">Resumable upload progress included</span>
                   </span>
                 </label>
 
