@@ -1,11 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { ImagePlus, Pencil, Play, Plus, RefreshCw, Trash2, Video, X } from "lucide-react";
+import Image from "next/image";
+import { motion, useReducedMotion } from "framer-motion";
+import { Film, Pencil, Play, Plus, RefreshCw, Sparkles, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { showErrorAlert, showSuccessToast } from "@/lib/alerts";
-import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import type { SkillVideo } from "@/data/skill-videos";
+import { SkillVideoEditor } from "@/components/admin/skill-video-editor";
 
 type SkillVideoItem = {
   id: string;
@@ -13,8 +15,6 @@ type SkillVideoItem = {
   is_published: boolean;
   sort_order: number;
 };
-
-const inputClass = "w-full rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground";
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -35,6 +35,7 @@ function field(content: SkillVideoItem["content"], key: "title" | "skill" | "des
 }
 
 export function SkillVideoManager() {
+  const reduceMotion = useReducedMotion();
   const [items, setItems] = React.useState<SkillVideoItem[]>([]);
   const [editing, setEditing] = React.useState<SkillVideoItem | null>(null);
   const [creating, setCreating] = React.useState(false);
@@ -95,153 +96,102 @@ export function SkillVideoManager() {
   }
 
   return (
-    <section className="mx-auto max-w-5xl px-4 pb-24">
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <section className="mx-auto max-w-6xl px-4 pb-24">
+      <div className="relative mb-8 overflow-hidden rounded-[2rem] border border-sky-500/15 bg-gradient-to-br from-sky-500/[0.11] via-card to-indigo-500/[0.09] p-6 sm:p-9">
+        <div className="pointer-events-none absolute -right-16 -top-24 h-64 w-64 rounded-full bg-sky-400/15 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-32 left-1/3 h-56 w-56 rounded-full bg-indigo-500/10 blur-3xl" />
+        <div className="relative flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Skill Videos</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Upload a short video per skill to showcase it on the Skills page.</p>
+          <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-sky-500/20 bg-sky-500/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-sky-500">
+            <Sparkles className="h-3.5 w-3.5" /> Creator studio
+          </p>
+          <h1 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl">Skill <span className="bg-gradient-to-r from-sky-400 to-indigo-500 bg-clip-text text-transparent">spotlights</span></h1>
+          <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">Turn your skills into little moments people can watch, remember, and share.</p>
         </div>
-        <Button type="button" onClick={() => { setEditing(null); setCreating(true); }}><Plus className="mr-2 h-4 w-4" /> Add skill video</Button>
+        <Button type="button" onClick={() => { setEditing(null); setCreating(true); }} className="relative min-h-12 rounded-2xl bg-gradient-to-r from-sky-500 to-blue-600 px-5 text-white shadow-lg shadow-sky-500/20 hover:from-sky-400 hover:to-blue-500">
+          <Plus className="mr-2 h-4 w-4" /> Create a spotlight
+        </Button>
+        </div>
       </div>
-      <div className="mb-6 flex items-center gap-2">
-        <Button type="button" variant="outline" onClick={() => void loadItems()} disabled={loading}><RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin" : ""}`} /> Refresh</Button>
-        <span className="text-sm text-muted-foreground">{items.length} {items.length === 1 ? "video" : "videos"}</span>
+      <div className="mb-5 flex items-center justify-between gap-3">
+        <div>
+          <h2 className="text-lg font-bold text-foreground">Your videos</h2>
+          <p className="text-xs text-muted-foreground">{items.length} {items.length === 1 ? "spotlight" : "spotlights"}</p>
+        </div>
+        <Button type="button" variant="outline" onClick={() => void loadItems()} disabled={loading} className="rounded-xl">
+          <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin motion-reduce:animate-none" : ""}`} /> Refresh
+        </Button>
       </div>
-      {loading ? <p className="rounded-2xl border border-border bg-card p-8 text-center text-muted-foreground">Loading skill videos…</p> :
-        items.length === 0 ? <div className="rounded-2xl border border-border bg-card p-8 text-center"><p className="text-foreground">No skill videos added yet.</p><Button type="button" className="mt-5" onClick={() => setCreating(true)}>Add first skill video</Button></div> :
-        <div className="space-y-3">{items.map((item) => <article key={item.id} className="flex items-center gap-4 rounded-2xl border border-border bg-card p-4">
-          <div className="relative flex h-16 w-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-accent/40">
+      {loading ? (
+        <div className="grid gap-4 md:grid-cols-2">
+          {[0, 1, 2, 3].map((index) => (
+            <div key={index} className="overflow-hidden rounded-3xl border border-border bg-card p-3">
+              <div className="aspect-video animate-pulse rounded-2xl bg-muted motion-reduce:animate-none" />
+              <div className="space-y-3 p-3">
+                <div className="h-3 w-1/3 animate-pulse rounded-full bg-muted motion-reduce:animate-none" />
+                <div className="h-5 w-2/3 animate-pulse rounded-full bg-muted motion-reduce:animate-none" />
+                <div className="h-3 w-1/2 animate-pulse rounded-full bg-muted motion-reduce:animate-none" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : items.length === 0 ? (
+        <motion.div
+          initial={reduceMotion ? undefined : { opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative overflow-hidden rounded-[2rem] border border-dashed border-sky-500/25 bg-gradient-to-br from-sky-500/[0.07] via-card to-indigo-500/[0.07] px-6 py-14 text-center"
+        >
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.4rem] bg-sky-500/10 text-sky-500">
+            <Film className="h-8 w-8" />
+          </div>
+          <h3 className="mt-5 text-xl font-bold text-foreground">Your first spotlight starts here</h3>
+          <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">Add a video demo or a short walkthrough. It’ll appear in the public Skills gallery once published.</p>
+          <Button type="button" onClick={() => setCreating(true)} className="mt-6 min-h-11 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 text-white">
+            <Plus className="mr-2 h-4 w-4" /> Add your first video
+          </Button>
+        </motion.div>
+      ) : (
+        <div className="grid gap-4 md:grid-cols-2">
+          {items.map((item, index) => (
+            <motion.article
+              key={item.id}
+              initial={reduceMotion ? undefined : { opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: reduceMotion ? 0 : index * 0.045 }}
+              whileHover={reduceMotion ? undefined : { y: -3 }}
+              className="group overflow-hidden rounded-3xl border border-border bg-card transition-colors hover:border-sky-500/35"
+            >
+          <div className="relative aspect-video overflow-hidden bg-gradient-to-br from-sky-500/15 via-indigo-500/10 to-violet-500/15">
             {field(item.content, "thumbnailUrl")
-              ? <img src={field(item.content, "thumbnailUrl")} alt="" className="h-full w-full object-cover" />
-              : <Play className="h-6 w-6 text-sky-400" />}
+              ? <Image src={field(item.content, "thumbnailUrl")} alt="" width={640} height={360} unoptimized className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+              : <div className="flex h-full items-center justify-center text-sky-500/70"><Film className="h-10 w-10" /></div>}
+            <span className="absolute left-3 top-3 rounded-full border border-white/20 bg-black/40 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white backdrop-blur">
+              {item.is_published ? "Published" : "Private draft"}
+            </span>
+            <span className="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-sky-500 text-white shadow-lg">
+              <Play className="ml-0.5 h-4 w-4 fill-white" />
+            </span>
           </div>
-          <div className="min-w-0 flex-1">
-            <h2 className="truncate font-semibold text-foreground">{field(item.content, "title", item.id)}</h2>
-            <p className="truncate text-sm text-muted-foreground">{field(item.content, "skill") && `${field(item.content, "skill")} · `}{item.is_published ? "Published" : "Hidden"}</p>
+          <div className="flex flex-col gap-4 p-4 sm:flex-row sm:items-center sm:p-5">
+            <div className="min-w-0 flex-1">
+              <span className="inline-flex max-w-full truncate rounded-full border border-sky-500/25 bg-sky-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-sky-500">{field(item.content, "skill", "Skill")}</span>
+              <h3 className="mt-2 truncate text-base font-bold text-foreground">{field(item.content, "title", item.id)}</h3>
+              <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">{field(item.content, "description", "No description yet.")}</p>
+            </div>
+            <div className="flex shrink-0 gap-2">
+              <Button type="button" variant="outline" size="sm" onClick={() => { setEditing(item); setCreating(false); }} className="min-h-10 flex-1 rounded-xl sm:flex-none">
+                <Pencil className="mr-2 h-4 w-4" /> Edit
+              </Button>
+              <Button type="button" variant="outline" size="sm" aria-label={`Delete ${field(item.content, "title", item.id)}`} onClick={() => void deleteItem(item)} className="min-h-10 rounded-xl text-destructive hover:bg-destructive/10">
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
-          <Button type="button" variant="outline" size="sm" onClick={() => { setEditing(item); setCreating(false); }}><Pencil className="mr-2 h-4 w-4" /> Edit</Button>
-          <Button type="button" variant="outline" size="sm" className="text-destructive" onClick={() => void deleteItem(item)}><Trash2 className="h-4 w-4" /></Button>
-        </article>)}</div>}
+            </motion.article>
+          ))}
+        </div>
+      )}
       {(creating || editing) && <SkillVideoEditor item={editing} onCancel={() => { setEditing(null); setCreating(false); }} onSave={saveItem} />}
     </section>
   );
-}
-
-function SkillVideoEditor({ item, onCancel, onSave }: { item: SkillVideoItem | null; onCancel: () => void; onSave: (content: Record<string, unknown>, visibility: { is_published: boolean; sort_order: number }) => Promise<void> }) {
-  const existing = item?.content;
-  const [title, setTitle] = React.useState(field(existing ?? {}, "title"));
-  const [skill, setSkill] = React.useState(field(existing ?? {}, "skill"));
-  const [description, setDescription] = React.useState(field(existing ?? {}, "description"));
-  const [videoUrl, setVideoUrl] = React.useState(field(existing ?? {}, "videoUrl"));
-  const [thumbnailUrl, setThumbnailUrl] = React.useState(field(existing ?? {}, "thumbnailUrl"));
-  const [published, setPublished] = React.useState(item?.is_published ?? true);
-  const [sortOrder, setSortOrder] = React.useState(item?.sort_order ?? 0);
-  const [uploadingVideo, setUploadingVideo] = React.useState(false);
-  const [uploadingThumb, setUploadingThumb] = React.useState(false);
-  const [saving, setSaving] = React.useState(false);
-
-  async function uploadVideo(file: File | undefined) {
-    if (!file) return;
-    if (!file.type.startsWith("video/")) {
-      await showErrorAlert("Video upload failed", "Choose an MP4, WebM, or MOV video.");
-      return;
-    }
-    setUploadingVideo(true);
-    try {
-      const supabase = createSupabaseBrowserClient();
-      const extension = file.name.split(".").pop()?.toLowerCase() || "mp4";
-      const path = `skill-videos/${crypto.randomUUID()}.${extension}`;
-      const { error } = await supabase.storage
-        .from("portfolio-media")
-        .upload(path, file, { contentType: file.type, cacheControl: "31536000", upsert: false });
-      if (error) throw new Error(error.message);
-      const { data } = supabase.storage.from("portfolio-media").getPublicUrl(path);
-      setVideoUrl(data.publicUrl);
-      await showSuccessToast("Video uploaded");
-    } catch (error) {
-      console.error("Unable to upload skill video:", error);
-      await showErrorAlert("Video upload failed", error instanceof Error ? error.message : "Use a hosted video link if the file is too large.");
-    } finally {
-      setUploadingVideo(false);
-    }
-  }
-
-  async function uploadThumbnail(file: File | undefined) {
-    if (!file) return;
-    setUploadingThumb(true);
-    try {
-      const formData = new FormData();
-      formData.set("file", file);
-      formData.set("collection", "skill-videos");
-      const response = await fetch("/api/admin/content/upload", { method: "POST", body: formData });
-      const data: unknown = await response.json();
-      if (!response.ok) throw new Error(readError(data, "Image upload failed."));
-      if (!isRecord(data) || typeof data.imageUrl !== "string") throw new Error("The upload response was invalid.");
-      setThumbnailUrl(data.imageUrl);
-      await showSuccessToast("Thumbnail uploaded");
-    } catch (error) {
-      await showErrorAlert("Thumbnail upload failed", error instanceof Error ? error.message : "Unable to upload thumbnail.");
-    } finally {
-      setUploadingThumb(false);
-    }
-  }
-
-  async function submit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setSaving(true);
-    const normalizedId = (existing?.id || title).trim().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-    try {
-      await onSave({
-        id: normalizedId,
-        title: title.trim(),
-        skill: skill.trim(),
-        description: description.trim(),
-        videoUrl: videoUrl.trim(),
-        ...(thumbnailUrl.trim() ? { thumbnailUrl: thumbnailUrl.trim() } : {}),
-      }, { is_published: published, sort_order: sortOrder });
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  return <div className="fixed inset-0 z-[250] overflow-y-auto bg-black/70 p-4" role="dialog" aria-modal="true">
-    <form onSubmit={submit} className="mx-auto my-6 max-w-2xl space-y-4 rounded-2xl border border-border bg-background p-5 shadow-2xl sm:p-7">
-      <div className="flex items-center justify-between"><h2 className="text-2xl font-bold text-foreground">{item ? "Edit" : "Add"} skill video</h2><Button type="button" variant="outline" onClick={onCancel}><X className="mr-2 h-4 w-4" /> Close</Button></div>
-      <label className="block text-sm font-medium text-foreground">Title<input required maxLength={160} value={title} onChange={(event) => setTitle(event.target.value)} className={`${inputClass} mt-1`} placeholder="e.g. Canva design walkthrough" /></label>
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className="block text-sm font-medium text-foreground">Skill<input required maxLength={120} value={skill} onChange={(event) => setSkill(event.target.value)} className={`${inputClass} mt-1`} placeholder="e.g. Canva (Graphic Design)" /></label>
-        <label className="block text-sm font-medium text-foreground">Display order<input type="number" min={0} value={sortOrder} onChange={(event) => setSortOrder(Number(event.target.value))} className={`${inputClass} mt-1`} /></label>
-      </div>
-      <label className="block text-sm font-medium text-foreground">Description (optional)<textarea maxLength={2000} rows={3} value={description} onChange={(event) => setDescription(event.target.value)} className={`${inputClass} mt-1`} placeholder="Briefly describe what the video shows." /></label>
-
-      <div className="space-y-3 rounded-xl border border-border bg-card/60 p-4">
-        <div>
-          <h3 className="font-semibold text-foreground">Video</h3>
-          <p className="mt-1 text-xs text-muted-foreground">Upload an MP4, WebM, or MOV up to 500 MB, or paste a hosted YouTube/Vimeo/direct link.</p>
-        </div>
-        <label className="block text-sm font-medium text-foreground">Video URL<input required maxLength={2048} value={videoUrl} onChange={(event) => setVideoUrl(event.target.value)} className={`${inputClass} mt-1`} placeholder="https://…/video.mp4 or YouTube/Vimeo link" /></label>
-        <label className="inline-flex cursor-pointer items-center rounded-xl border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-accent">
-          <Video className="mr-2 h-4 w-4" /> {uploadingVideo ? "Uploading…" : "Upload video"}
-          <input type="file" accept="video/mp4,video/webm,video/quicktime" disabled={uploadingVideo} className="sr-only" onChange={(event) => void uploadVideo(event.target.files?.[0])} />
-        </label>
-        {videoUrl.trim() && <video src={videoUrl.trim()} controls preload="metadata" className="max-h-56 w-full rounded-lg border border-border bg-black" />}
-      </div>
-
-      <div className="space-y-3 rounded-xl border border-border bg-card/60 p-4">
-        <div>
-          <h3 className="font-semibold text-foreground">Thumbnail (optional)</h3>
-          <p className="mt-1 text-xs text-muted-foreground">Shown on the card before the video plays.</p>
-        </div>
-        <label className="block text-sm font-medium text-foreground">Thumbnail URL<input maxLength={2048} value={thumbnailUrl} onChange={(event) => setThumbnailUrl(event.target.value)} className={`${inputClass} mt-1`} placeholder="https://… or /image.png" /></label>
-        <label className="inline-flex cursor-pointer items-center rounded-xl border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-accent">
-          <ImagePlus className="mr-2 h-4 w-4" /> {uploadingThumb ? "Uploading…" : "Upload thumbnail"}
-          <input type="file" accept="image/jpeg,image/png,image/webp" disabled={uploadingThumb} className="sr-only" onChange={(event) => void uploadThumbnail(event.target.files?.[0])} />
-        </label>
-        {thumbnailUrl.trim() && <img src={thumbnailUrl.trim()} alt="" className="aspect-video w-40 rounded-lg border border-border object-cover" />}
-      </div>
-
-      <label className="flex items-center gap-2 text-sm text-foreground"><input type="checkbox" checked={published} onChange={(event) => setPublished(event.target.checked)} /> Show this video on the Skills page</label>
-      <div className="flex justify-end gap-3"><Button type="button" variant="outline" onClick={onCancel}>Cancel</Button><Button type="submit" disabled={saving || uploadingVideo || uploadingThumb}>{saving ? "Saving…" : "Save skill video"}</Button></div>
-    </form>
-  </div>;
 }
