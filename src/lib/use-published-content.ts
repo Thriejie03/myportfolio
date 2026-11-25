@@ -14,7 +14,13 @@ export function usePublishedContent<T>(path: string, initialContent: T[]) {
           return response.json() as Promise<Record<string, unknown>>;
         })
         .then((data) => {
-          const key = path.endsWith("/projects") ? "projects" : path.endsWith("/hobbies") ? "hobbies" : "certificates";
+          const key = path.endsWith("/projects")
+            ? "projects"
+            : path.endsWith("/hobbies")
+              ? "hobbies"
+              : path.endsWith("/skill-videos")
+                ? "skillVideos"
+                : "certificates";
           const items = data[key];
           if (!Array.isArray(items)) throw new Error("Content response is invalid");
           setContent(items as T[]);

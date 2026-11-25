@@ -6,9 +6,10 @@ import { HomepageContentManager } from "@/components/admin/homepage-content-mana
 import { PortfolioContentManager } from "@/components/admin/portfolio-content-manager";
 import { ChatbotFaqManager } from "@/components/admin/chatbot-faq-manager";
 import { HobbyManager } from "@/components/admin/hobby-manager";
+import { SkillVideoManager } from "@/components/admin/skill-video-manager";
 import { Button } from "@/components/ui/button";
 
-type Section = "inbox" | "content" | "homepage" | "chatbot" | "hobbies";
+type Section = "inbox" | "content" | "homepage" | "chatbot" | "hobbies" | "skill-videos";
 
 export function AdminDashboard() {
   const [section, setSection] = React.useState<Section>("inbox");
@@ -31,6 +32,9 @@ export function AdminDashboard() {
         <Button type="button" variant={section === "hobbies" ? "default" : "outline"} onClick={() => setSection("hobbies")}>
           Personal hobbies
         </Button>
+        <Button type="button" variant={section === "skill-videos" ? "default" : "outline"} onClick={() => setSection("skill-videos")}>
+          Skill videos
+        </Button>
       </nav>
       {section === "inbox"
         ? <MessageInbox />
@@ -40,7 +44,9 @@ export function AdminDashboard() {
             ? <HomepageContentManager />
             : section === "chatbot"
               ? <ChatbotFaqManager />
-              : <HobbyManager />}
+              : section === "hobbies"
+                ? <HobbyManager />
+                : <SkillVideoManager />}
     </>
   );
 }

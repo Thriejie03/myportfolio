@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { certificates, type Certificate } from "@/data/certificates";
 import { projects } from "@/data/projects";
 import { hobbies, type Hobby } from "@/data/hobbies";
+import { skillVideos as defaultSkillVideos, type SkillVideo } from "@/data/skill-videos";
 import { defaultHomepageContent, mergeHomepageContent, type HomepageContent } from "@/data/homepage";
 import { getSupabaseConfig } from "@/lib/supabase/config";
 import type { Project } from "@/types/project";
@@ -62,6 +63,24 @@ export async function getPublishedCertificates(): Promise<Certificate[]> {
 
 export async function getPublishedHobbies(): Promise<Hobby[]> {
   return loadPublishedContent<Hobby>("portfolio_hobbies", hobbies);
+}
+
+export async function getPublishedSkillVideos(): Promise<SkillVideo[]> {
+  const supabase = createPublicClient();
+  if (!supabase) return defaultSkillVideos;
+
+  const { data, error } = await supabase
+    .from("portfolio_skill_videos")
+    .select("content")
+    .eq("is_published", true)
+    .order("sort_order", { ascending: true });
+
+  if (error) {
+    console.error("Unable to load public skill videos:", error.message);
+    return defaultSkillVideos;
+  }
+
+  return (data as { content: SkillVideo }[]).map((row) => row.content);
 }
 
 export async function getPublishedHomepageContent(): Promise<HomepageContent> {

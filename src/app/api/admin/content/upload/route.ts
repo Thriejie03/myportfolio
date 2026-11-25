@@ -31,7 +31,7 @@ export async function POST(request: Request) {
   const formData = await request.formData();
   const file = formData.get("file");
   const collection = formData.get("collection");
-  if (!(file instanceof File) || !["projects", "certificates", "homepage", "hobbies"].includes(String(collection))) {
+  if (!(file instanceof File) || !["projects", "certificates", "homepage", "hobbies", "skill-videos"].includes(String(collection))) {
     return NextResponse.json({ error: "Choose a file and a valid content type." }, { status: 400 });
   }
 
