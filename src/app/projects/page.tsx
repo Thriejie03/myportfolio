@@ -5,6 +5,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { ProjectCard } from "@/components/cards/project-card";
 import { ProjectGallery } from "@/components/cards/project-gallery";
+import { SkillVideos } from "@/components/sections/skill-videos";
 import { projects } from "@/data/projects";
 import { Project } from "@/types/project";
 import { usePublishedContent } from "@/lib/use-published-content";
@@ -18,15 +19,20 @@ export default function ProjectsPage() {
     <main className="min-h-screen bg-background">
       <Navbar />
       
-      <section className="pt-32 pb-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">All <span className="text-sky-400">Projects</span></h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              A collection of Thrie Jie&apos;s academic, creative, and practical outputs. Projects will be added as her experience grows.
-            </p>
-          </div>
+      <section className="pb-24 pt-32">
+        <header className="mx-auto mb-10 max-w-7xl px-4 text-center sm:px-6 lg:px-8">
+          <h1 className="mb-5 text-4xl font-bold text-foreground md:text-6xl">Projects <span className="text-sky-400">&amp; Videos</span></h1>
+          <p className="mx-auto max-w-2xl text-muted-foreground">
+            Explore Thrie Jie&apos;s projects and watch her skills in action.
+          </p>
+        </header>
 
+        <div id="skill-videos" className="scroll-mt-24">
+          <SkillVideos />
+        </div>
+
+        <div className="mx-auto mt-8 max-w-7xl px-4 sm:px-6 lg:px-8">
+          <h2 className="mb-8 text-center text-3xl font-bold text-foreground">Projects</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {publishedProjects.map((project, index) => (
               <ProjectCard 

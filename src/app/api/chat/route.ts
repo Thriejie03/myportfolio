@@ -126,8 +126,9 @@ function getPHTime(date: Date = new Date()): string {
 const PORTFOLIO_ROUTES = [
   { key: "home", path: "/", label: "Home", keywords: ["home", "landing page", "main page", "front page", "go home"] },
   { key: "about", path: "/about", label: "About Me", keywords: ["about", "about me", "about yourself", "tell me about", "go to about", "open about"] },
+  { key: "skill-videos", path: "/projects#skill-videos", label: "Skills in Action", keywords: ["skill video", "skill videos", "watch videos", "video demonstrations", "show videos"] },
   { key: "projects", path: "/projects", label: "Projects", keywords: ["project", "projects", "show projects", "open projects", "go to projects", "portfolio work"] },
-  { key: "skills", path: "/skills", label: "Technologies / Skills", keywords: ["skill", "skills", "technology", "technologies", "tech stack", "show skills", "open skills", "go to skills"] },
+  { key: "skills", path: "/skills", label: "Skills", keywords: ["skill", "skills", "technology", "technologies", "tech stack", "show skills", "open skills", "go to skills"] },
   { key: "certificates", path: "/certificates", label: "Certificates", keywords: ["certificate", "certificates", "certification", "certifications", "award", "awards", "show certificates", "open certificates", "go to certificates"] },
   { key: "contact", path: "/contact", label: "Contact", keywords: ["contact", "contact me", "get in touch", "hire", "show contact", "open contact", "go to contact"] },
 ];

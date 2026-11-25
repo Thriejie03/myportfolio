@@ -3,7 +3,7 @@
 import * as React from "react";
 import Image from "next/image";
 import { motion, useReducedMotion } from "framer-motion";
-import { Film, Pencil, Play, Plus, RefreshCw, Sparkles, Trash2 } from "lucide-react";
+import { Film, Pencil, Play, Plus, RefreshCw, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { showErrorAlert, showSuccessToast } from "@/lib/alerts";
 import type { SkillVideo } from "@/data/skill-videos";
@@ -103,20 +103,20 @@ export function SkillVideoManager() {
         <div className="relative flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="mb-3 inline-flex items-center gap-2 rounded-full border border-sky-500/20 bg-sky-500/10 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-sky-500">
-            <Sparkles className="h-3.5 w-3.5" /> Creator studio
+            <Film className="h-3.5 w-3.5" /> Skill videos
           </p>
-          <h1 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl">Skill <span className="bg-gradient-to-r from-sky-400 to-indigo-500 bg-clip-text text-transparent">spotlights</span></h1>
-          <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">Turn your skills into little moments people can watch, remember, and share.</p>
+          <h1 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl">Manage your <span className="bg-gradient-to-r from-sky-400 to-indigo-500 bg-clip-text text-transparent">videos</span></h1>
+          <p className="mt-2 max-w-xl text-sm leading-relaxed text-muted-foreground">Add short videos that show what you can do. Visitors will see published videos on your Projects page.</p>
         </div>
         <Button type="button" onClick={() => { setEditing(null); setCreating(true); }} className="relative min-h-12 rounded-2xl bg-gradient-to-r from-sky-500 to-blue-600 px-5 text-white shadow-lg shadow-sky-500/20 hover:from-sky-400 hover:to-blue-500">
-          <Plus className="mr-2 h-4 w-4" /> Create a spotlight
+          <Plus className="mr-2 h-4 w-4" /> Add a video
         </Button>
         </div>
       </div>
       <div className="mb-5 flex items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-bold text-foreground">Your videos</h2>
-          <p className="text-xs text-muted-foreground">{items.length} {items.length === 1 ? "spotlight" : "spotlights"}</p>
+          <p className="text-xs text-muted-foreground">{items.length} {items.length === 1 ? "video" : "videos"}</p>
         </div>
         <Button type="button" variant="outline" onClick={() => void loadItems()} disabled={loading} className="rounded-xl">
           <RefreshCw className={`mr-2 h-4 w-4 ${loading ? "animate-spin motion-reduce:animate-none" : ""}`} /> Refresh
@@ -144,8 +144,8 @@ export function SkillVideoManager() {
           <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[1.4rem] bg-sky-500/10 text-sky-500">
             <Film className="h-8 w-8" />
           </div>
-          <h3 className="mt-5 text-xl font-bold text-foreground">Your first spotlight starts here</h3>
-          <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">Add a video demo or a short walkthrough. It’ll appear in the public Skills gallery once published.</p>
+          <h3 className="mt-5 text-xl font-bold text-foreground">No videos yet</h3>
+          <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-muted-foreground">Add a short clip to show one of your skills. You can choose whether visitors can see it.</p>
           <Button type="button" onClick={() => setCreating(true)} className="mt-6 min-h-11 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 text-white">
             <Plus className="mr-2 h-4 w-4" /> Add your first video
           </Button>
@@ -166,7 +166,7 @@ export function SkillVideoManager() {
               ? <Image src={field(item.content, "thumbnailUrl")} alt="" width={640} height={360} unoptimized className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
               : <div className="flex h-full items-center justify-center text-sky-500/70"><Film className="h-10 w-10" /></div>}
             <span className="absolute left-3 top-3 rounded-full border border-white/20 bg-black/40 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white backdrop-blur">
-              {item.is_published ? "Published" : "Private draft"}
+              {item.is_published ? "Visible to everyone" : "Only you can see this"}
             </span>
             <span className="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-sky-500 text-white shadow-lg">
               <Play className="ml-0.5 h-4 w-4 fill-white" />

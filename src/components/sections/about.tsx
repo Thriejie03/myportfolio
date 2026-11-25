@@ -85,7 +85,7 @@ export function About({ content }: { content: HomepageContent["about"] }) {
             </div>
             <Button variant="outline" className="border-border text-foreground hover:bg-accent rounded-xl" asChild>
               <Link href="/skills">
-                See All Technologies <ExternalLink className="ml-2 w-4 h-4" />
+                Explore My Skills <ExternalLink className="ml-2 w-4 h-4" />
               </Link>
             </Button>
           </div>

@@ -243,7 +243,7 @@ export function SkillVideoEditor({
       const isSizeLimitError =
         error instanceof DetailedError && error.originalResponse?.getStatus() === 413;
       const message = isSizeLimitError
-        ? "Supabase rejected this video because it exceeds the active Storage size limit. Check Storage → Settings → Global file size limit and the portfolio-media bucket limit. Free projects are capped at 50 MB. Reduce/compress the video or use a YouTube/Vimeo link if it exceeds your plan's limit."
+        ? "This video is larger than the current upload limit. Try a shorter video or paste a YouTube or Vimeo link instead."
         : error instanceof Error
           ? error.message
           : "Unable to upload video. Please try again.";
@@ -340,9 +340,9 @@ export function SkillVideoEditor({
               </span>
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-sky-500">Creator studio</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-sky-500">Skill videos</p>
               <h2 id="skill-video-editor-title" className="truncate text-lg font-bold text-foreground sm:text-xl">
-                {item ? "Shape your showcase" : "Make a skill moment"}
+                {item ? "Edit your video" : "Add a skill video"}
               </h2>
             </div>
           </div>
@@ -361,16 +361,16 @@ export function SkillVideoEditor({
           <div className="grid min-h-0 flex-1 overflow-y-auto lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
             <div className="space-y-6 p-4 sm:p-7">
               <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-                <span className="rounded-full bg-sky-500/10 px-3 py-1.5 text-sky-500">01 · Add media</span>
+                <span className="rounded-full bg-sky-500/10 px-3 py-1.5 text-sky-500">01 · Choose a video</span>
                 <span className="h-px flex-1 bg-border" />
-                <span>02 · Tell the story</span>
+                <span>02 · Add details</span>
               </div>
 
               <section className="space-y-3">
                 <div className="flex items-end justify-between gap-3">
                   <div>
-                    <h3 className="text-base font-bold text-foreground">Bring your video</h3>
-                    <p className="mt-1 text-sm text-muted-foreground">Drop in a clip or choose one from your device.</p>
+                    <h3 className="text-base font-bold text-foreground">Choose your video</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">Choose a video from your device or drop it here.</p>
                   </div>
                   <span className="hidden rounded-full border border-border px-3 py-1 text-[11px] font-medium text-muted-foreground sm:inline-flex">MP4 · WebM · MOV</span>
                 </div>
@@ -419,7 +419,7 @@ export function SkillVideoEditor({
                   </span>
                   <span className="relative text-sm font-semibold text-foreground">
                     {upload.status === "uploading"
-                      ? "Sending your video…"
+                      ? "Uploading your video…"
                       : upload.status === "complete"
                         ? "Video uploaded · choose another"
                         : isDragging
@@ -428,8 +428,8 @@ export function SkillVideoEditor({
                   </span>
                   <span className="relative mt-1 text-xs text-muted-foreground">
                     or <span className="font-semibold text-sky-500 underline decoration-sky-500/40 underline-offset-4">browse files</span>
-                    <span className="block pt-1.5">Supabase Free limit: 50 MB · higher limits depend on project and bucket settings</span>
-                    <span className="block pt-1">Resumable upload progress included</span>
+                    <span className="block pt-1.5">Some accounts limit videos to 50 MB. For larger videos, use a YouTube or Vimeo link.</span>
+                    <span className="block pt-1">You can follow the upload progress here.</span>
                   </span>
                 </label>
 
@@ -491,11 +491,11 @@ export function SkillVideoEditor({
 
                 <div className="relative flex items-center gap-3 py-1">
                   <span className="h-px flex-1 bg-border" />
-                  <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">or use a hosted video</span>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-muted-foreground">or paste a video link</span>
                   <span className="h-px flex-1 bg-border" />
                 </div>
                 <label className="block text-xs font-semibold text-foreground">
-                  Video link
+                  YouTube, Vimeo, or video link
                   <input
                     type="url"
                     required
@@ -511,8 +511,8 @@ export function SkillVideoEditor({
               <section className="space-y-3 rounded-3xl border border-border bg-card/55 p-4 sm:p-5">
                 <div className="flex items-center justify-between gap-3">
                   <div>
-                    <h3 className="text-sm font-bold text-foreground">Give it a cover</h3>
-                    <p className="mt-1 text-xs text-muted-foreground">A thumbnail makes the gallery feel like yours.</p>
+                    <h3 className="text-sm font-bold text-foreground">Cover image <span className="font-normal text-muted-foreground">(optional)</span></h3>
+                    <p className="mt-1 text-xs text-muted-foreground">This picture appears before visitors play your video.</p>
                   </div>
                   {thumbnailUrl && (
                     <button type="button" onClick={() => setThumbnailUrl("")} className="text-xs font-semibold text-muted-foreground hover:text-destructive">
@@ -530,7 +530,7 @@ export function SkillVideoEditor({
                     </div>
                     <label className="inline-flex min-h-10 cursor-pointer items-center rounded-xl border border-border px-3 text-xs font-semibold text-foreground transition hover:border-sky-400/50 hover:bg-sky-400/5">
                       {isUploadingThumb ? <LoaderCircle className="mr-2 h-4 w-4 animate-spin motion-reduce:animate-none" /> : <ImagePlus className="mr-2 h-4 w-4" />}
-                      {isUploadingThumb ? "Adding…" : "Choose cover"}
+                      {isUploadingThumb ? "Adding…" : "Choose an image"}
                       <input
                         type="file"
                         accept="image/jpeg,image/png,image/webp"
@@ -550,8 +550,8 @@ export function SkillVideoEditor({
                 <div className="flex items-center gap-3">
                   <span className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-500/10 text-xs font-bold text-sky-500">02</span>
                   <div>
-                    <h3 className="text-sm font-bold text-foreground">Tell the story</h3>
-                    <p className="text-xs text-muted-foreground">Help visitors know what they are watching.</p>
+                    <h3 className="text-sm font-bold text-foreground">Add video details</h3>
+                    <p className="text-xs text-muted-foreground">Give your video a title and choose the skill it shows.</p>
                   </div>
                 </div>
                 <label className="block text-xs font-semibold text-foreground">
@@ -573,8 +573,8 @@ export function SkillVideoEditor({
               <div className="flex items-center gap-3">
                 <span className="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-500/10 text-xs font-bold text-indigo-500">03</span>
                 <div>
-                  <h3 className="text-sm font-bold text-foreground">The visitor view</h3>
-                  <p className="text-xs text-muted-foreground">A little preview of the published card.</p>
+                  <h3 className="text-sm font-bold text-foreground">Page preview</h3>
+                  <p className="text-xs text-muted-foreground">This is how your video will look to visitors.</p>
                 </div>
               </div>
 
@@ -606,7 +606,7 @@ export function SkillVideoEditor({
                     </span>
                   )}
                   <span className="absolute left-3 top-3 rounded-full border border-white/20 bg-black/40 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-white backdrop-blur">
-                    Skill spotlight
+                    Skills in action
                   </span>
                 </div>
                 <div className="p-4 sm:p-5">
@@ -615,7 +615,7 @@ export function SkillVideoEditor({
                   </span>
                   <h4 className="mt-3 line-clamp-2 text-lg font-bold text-foreground">{title.trim() || "Your video title"}</h4>
                   <p className="mt-1 line-clamp-3 min-h-10 text-sm leading-relaxed text-muted-foreground">
-                    {description.trim() || "Add a short note about what this demonstration is all about."}
+                    {description.trim() || "Add a short note about what your video shows."}
                   </p>
                   <div className="mt-4 flex items-center justify-between border-t border-border pt-3 text-xs text-muted-foreground">
                     <span>Thrie Jie · Portfolio</span>
@@ -628,8 +628,8 @@ export function SkillVideoEditor({
                 <div className="flex gap-3">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-sky-500/10 text-sky-500"><Sparkles className="h-4 w-4" /></span>
                   <div>
-                    <p className="text-xs font-bold text-foreground">Tiny creator tip</p>
-                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">A clear title and a short, focused clip make your skill easy to remember.</p>
+                    <p className="text-xs font-bold text-foreground">Helpful tip</p>
+                    <p className="mt-1 text-xs leading-relaxed text-muted-foreground">A clear title and short video help visitors see what you can do.</p>
                   </div>
                 </div>
               </div>
@@ -642,12 +642,13 @@ export function SkillVideoEditor({
                   className="mt-0.5 h-4 w-4 accent-sky-500"
                 />
                 <span>
-                  <span className="block text-xs font-bold text-foreground">Publish to the Skills page</span>
-                  <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">Turn this off to save it privately while you work on it.</span>
+                  <span className="block text-xs font-bold text-foreground">Show this video on my Projects page</span>
+                  <span className="mt-1 block text-xs leading-relaxed text-muted-foreground">Turn this off if you are not ready for visitors to see it.</span>
                 </span>
               </label>
               <label className="mt-4 block text-xs font-semibold text-foreground">
-                Display order
+                Video position
+                <span className="mt-1 block font-normal text-muted-foreground">Lower numbers appear first.</span>
                 <input type="number" min={0} max={10000} value={sortOrder} onChange={(event) => setSortOrder(Number(event.target.value))} className={`${inputClass} mt-1.5`} />
               </label>
             </aside>
@@ -655,7 +656,7 @@ export function SkillVideoEditor({
 
           <footer className="sticky bottom-0 z-10 flex shrink-0 items-center justify-between gap-3 border-t border-border bg-background/95 px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] backdrop-blur-xl sm:px-7 sm:py-4">
             <p className="hidden text-xs text-muted-foreground sm:block">
-              {upload.status === "uploading" ? `Video upload · ${uploadPercent}%` : "Changes are saved to your portfolio"}
+              {upload.status === "uploading" ? `Uploading video · ${uploadPercent}%` : "Remember to save your changes"}
             </p>
             <div className="ml-auto flex w-full gap-2 sm:w-auto sm:gap-3">
               <Button type="button" variant="outline" onClick={onCancel} disabled={isSaving || upload.status === "uploading"} className="min-h-11 flex-1 rounded-xl sm:flex-none">

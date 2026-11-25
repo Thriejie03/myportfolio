@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Mail, Code, Database, Cpu, Globe } from "lucide-react";
+import { ArrowRight, Mail, Code, Database, Cpu, Globe, Play } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -53,9 +53,16 @@ export function Hero({ content }: { content: HomepageContent["hero"] }) {
               </Button>
             </div>
 
-            <div className="flex items-center space-x-6">
+            <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
               <Link href="mailto:thriejieb@gmail.com" className="text-muted-foreground hover:text-foreground transition-all transform hover:scale-110">
                 <Mail className="w-6 h-6" />
+              </Link>
+              <Link
+                href="/projects#skill-videos"
+                className="inline-flex min-h-11 items-center gap-2 rounded-full border border-sky-500/25 bg-sky-500/5 px-4 text-sm font-semibold text-sky-600 transition-colors hover:border-sky-500/50 hover:bg-sky-500/10 dark:text-sky-400"
+              >
+                <Play className="h-4 w-4 fill-current" />
+                See my skills in action
               </Link>
             </div>
           </motion.div>

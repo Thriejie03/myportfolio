@@ -62,9 +62,9 @@ export function SkillVideos() {
 
   if (isLoading) {
     return (
-      <section className="relative overflow-hidden py-20 sm:py-24" aria-label="Loading skill videos">
+      <section className="relative overflow-hidden py-14 sm:py-20" aria-label="Loading skill videos">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-12 text-center sm:mb-16">
+          <div className="mb-8 text-center sm:mb-12">
             <div className="mx-auto mb-4 h-9 w-56 animate-pulse rounded-full bg-muted motion-reduce:animate-none" />
             <div className="mx-auto h-4 w-72 max-w-full animate-pulse rounded-full bg-muted motion-reduce:animate-none" />
           </div>
@@ -90,14 +90,17 @@ export function SkillVideos() {
   const playback = active ? resolvePlayback(active.videoUrl) : null;
 
   return (
-    <section className="py-24 relative overflow-hidden">
+    <section className="relative overflow-hidden py-14 sm:py-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold text-foreground mb-4">Skill <span className="text-sky-400">Videos</span></h2>
-          <p className="text-muted-foreground">Watch Thrie Jie demonstrate her skills in action.</p>
+        <div className="mb-8 text-center sm:mb-12">
+          <h2 className="mb-3 text-3xl font-bold text-foreground md:text-5xl">Skills <span className="text-sky-400">in Action</span></h2>
+          <p className="text-muted-foreground">Watch Thrie Jie put her skills to work.</p>
+          <p className="mt-2 text-xs text-muted-foreground">Choose a video to watch.</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className={skillVideos.length === 1
+          ? "mx-auto grid w-full max-w-3xl grid-cols-1"
+          : "grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"}>
           {skillVideos.map((video, index) => (
             <motion.button
               key={video.id}
